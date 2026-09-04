@@ -1,0 +1,97 @@
+<?php
+
+use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\AttachmentController;
+use App\Http\Controllers\AttachmentVersionController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\BoardController;
+use App\Http\Controllers\BoardFileSettingsController;
+use App\Http\Controllers\BoardListController;
+use App\Http\Controllers\BoardMessageController;
+use App\Http\Controllers\GlobalSearchController;
+use App\Http\Controllers\ProfileAvatarController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProfilePasswordController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ReportExportController;
+use App\Http\Controllers\TaskAssigneeController;
+use App\Http\Controllers\TaskChecklistItemController;
+use App\Http\Controllers\TaskCommentController;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TeamController;
+use App\Http\Controllers\TeamDashboardController;
+use App\Http\Controllers\TeamInvitationController;
+use App\Http\Controllers\TeamMemberController;
+use App\Http\Controllers\WhatsappConnectionController;
+use App\Http\Controllers\WhatsappConnectionTestController;
+use App\Http\Controllers\WhatsappNotificationHistoryController;
+use Illuminate\Support\Facades\Route;
+
+Route::middleware('guest')->group(function (): void {
+    Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
+    Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login.store');
+    Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
+    Route::post('/register', [RegisteredUserController::class, 'store'])->name('register.store');
+});
+
+Route::middleware('auth')->group(function (): void {
+    Route::get('/', [TeamDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/search', GlobalSearchController::class)->name('search');
+    Route::get('/reports', ReportController::class)->name('reports.index');
+    Route::get('/reports/export/pdf', [ReportExportController::class, 'pdf'])->name('reports.pdf');
+    Route::get('/reports/export/excel', [ReportExportController::class, 'excel'])->name('reports.excel');
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profile/avatar', [ProfileAvatarController::class, 'show'])->name('profile.avatar.show');
+    Route::post('/profile/avatar', [ProfileAvatarController::class, 'update'])->name('profile.avatar.update');
+    Route::delete('/profile/avatar', [ProfileAvatarController::class, 'destroy'])->name('profile.avatar.destroy');
+    Route::patch('/profile/password', [ProfilePasswordController::class, 'update'])->name('profile.password.update');
+    Route::get('/profile/whatsapp', [WhatsappConnectionController::class, 'show'])->name('profile.whatsapp.show');
+    Route::put('/profile/whatsapp', [WhatsappConnectionController::class, 'update'])->name('profile.whatsapp.update');
+    Route::delete('/profile/whatsapp', [WhatsappConnectionController::class, 'destroy'])->name('profile.whatsapp.destroy');
+    Route::post('/profile/whatsapp/test', WhatsappConnectionTestController::class)
+        ->middleware('throttle:3,1')
+        ->name('profile.whatsapp.test');
+    Route::get('/profile/whatsapp/history', WhatsappNotificationHistoryController::class)->name('profile.whatsapp.history');
+    Route::get('/boards', [BoardController::class, 'index'])->name('boards.index');
+    Route::post('/teams', [TeamController::class, 'store'])->name('teams.store');
+    Route::get('/teams/{team}', [TeamController::class, 'show'])->name('teams.show');
+    Route::patch('/teams/{team}', [TeamController::class, 'update'])->name('teams.update');
+    Route::delete('/teams/{team}', [TeamController::class, 'destroy'])->name('teams.destroy');
+    Route::post('/teams/{team}/members', [TeamMemberController::class, 'store'])->name('teams.members.store');
+    Route::delete('/teams/{team}/members/{user}', [TeamMemberController::class, 'destroy'])->name('teams.members.destroy');
+    Route::patch('/teams/{team}/members/{user}', [TeamMemberController::class, 'update'])->name('teams.members.update');
+    Route::post('/teams/{team}/invitations', [TeamInvitationController::class, 'store'])->name('teams.invitations.store');
+    Route::delete('/team-invitations/{teamInvitation}', [TeamInvitationController::class, 'destroy'])->name('team-invitations.destroy');
+    Route::get('/team-invitations/{teamInvitation}/{token}', [TeamInvitationController::class, 'show'])->name('team-invitations.show');
+    Route::post('/team-invitations/{teamInvitation}/{token}', [TeamInvitationController::class, 'accept'])->name('team-invitations.accept');
+    Route::post('/projects', [BoardController::class, 'store'])->name('projects.store');
+    Route::patch('/projects/{board}', [BoardController::class, 'update'])->name('projects.update');
+    Route::delete('/projects/{board}', [BoardController::class, 'destroy'])->name('projects.destroy');
+    Route::patch('/projects/{board}/file-settings', [BoardFileSettingsController::class, 'update'])->name('boards.file-settings.update');
+    Route::get('/attachments/{attachment}', [AttachmentController::class, 'show'])->name('attachments.show');
+    Route::get('/attachments/{attachment}/preview', [AttachmentController::class, 'preview'])->name('attachments.preview');
+    Route::get('/attachments/{attachment}/inline', [AttachmentController::class, 'inline'])->name('attachments.inline');
+    Route::post('/attachments/{attachment}/versions', [AttachmentVersionController::class, 'store'])->name('attachments.versions.store');
+    Route::delete('/attachments/{attachment}', [AttachmentController::class, 'destroy'])->name('attachments.destroy');
+    Route::get('/boards/{board}', [BoardController::class, 'show'])->name('boards.show');
+    Route::get('/boards/{board}/summary', [BoardController::class, 'summary'])->name('boards.summary');
+    Route::get('/boards/{board}/chat', [BoardController::class, 'chat'])->name('boards.chat');
+    Route::post('/boards/{board}/chat', [BoardMessageController::class, 'store'])->name('boards.messages.store');
+    Route::get('/boards/{board}/announcements', [BoardController::class, 'announcements'])->name('boards.announcements');
+    Route::post('/boards/{board}/announcements', [AnnouncementController::class, 'store'])->name('boards.announcements.store');
+    Route::post('/boards/{board}/lists', [BoardListController::class, 'store'])->name('boards.lists.store');
+    Route::post('/boards/{board}/tasks', [TaskController::class, 'store'])->name('boards.tasks.store');
+    Route::get('/boards/{board}/tasks/{task}', [TaskController::class, 'show'])->name('boards.tasks.show');
+    Route::put('/boards/{board}/tasks/{task}/assignees', [TaskAssigneeController::class, 'update'])->name('boards.tasks.assignees.update');
+    Route::post('/boards/{board}/tasks/{task}/checklist', [TaskChecklistItemController::class, 'store'])->name('boards.tasks.checklist.store');
+    Route::patch('/boards/{board}/tasks/{task}/checklist/{checklistItem}', [TaskChecklistItemController::class, 'update'])->name('boards.tasks.checklist.update');
+    Route::delete('/boards/{board}/tasks/{task}/checklist/{checklistItem}', [TaskChecklistItemController::class, 'destroy'])->name('boards.tasks.checklist.destroy');
+    Route::post('/boards/{board}/tasks/{task}/comments', [TaskCommentController::class, 'store'])->name('boards.tasks.comments.store');
+    Route::delete('/boards/{board}/tasks/{task}/comments/{comment}', [TaskCommentController::class, 'destroy'])->name('boards.tasks.comments.destroy');
+    Route::post('/boards/{board}/tasks/{task}/attachments', [AttachmentController::class, 'store'])->name('boards.tasks.attachments.store');
+    Route::patch('/boards/{board}/tasks/{task}', [TaskController::class, 'update'])->name('boards.tasks.update');
+    Route::delete('/boards/{board}/tasks/{task}', [TaskController::class, 'destroy'])->name('boards.tasks.destroy');
+    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+});

@@ -1,0 +1,70 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+@layer base {
+    button,
+    a,
+    input,
+    select,
+    textarea {
+        transition-duration: 150ms;
+    }
+
+    dialog::backdrop {
+        animation: backdrop-in 160ms ease-out;
+    }
+}
+
+@layer utilities {
+    .kanban-scroll {
+        scrollbar-color: #cbd5e1 transparent;
+        scrollbar-width: thin;
+    }
+
+    .kanban-scroll::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .kanban-scroll::-webkit-scrollbar-thumb {
+        border-radius: 999px;
+        background: #cbd5e1;
+    }
+
+    .task-dropzone {
+        scrollbar-color: #cbd5e1 transparent;
+        scrollbar-width: thin;
+    }
+
+    .task-dropzone::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    .task-dropzone::-webkit-scrollbar-thumb {
+        border-radius: 999px;
+        background: #cbd5e1;
+    }
+
+    [data-task-card].is-dragging {
+        opacity: .45;
+        transform: rotate(2deg);
+    }
+
+    .task-dropzone.is-over {
+        border-radius: .75rem;
+        outline: 2px dashed #059669;
+        outline-offset: 4px;
+        background: rgb(209 250 229 / .45);
+    }
+}
+
+@keyframes backdrop-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
