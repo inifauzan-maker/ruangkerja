@@ -18,6 +18,15 @@ use Illuminate\Support\Facades\Storage;
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
+    public const RoleSuperAdmin = 'superadmin';
+
+    public const RoleUser = 'user';
+
+    protected $attributes = [
+        'global_role' => self::RoleUser,
+        'is_active' => true,
+    ];
+
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
@@ -48,6 +57,22 @@ class User extends Authenticatable
         return $this->hasOne(WhatsappConnection::class);
     }
 
+    public function adminAuditLogs(): HasMany
+    {
+        return $this->hasMany(AdminAuditLog::class, 'actor_id');
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->global_role === self::RoleSuperAdmin;
+    }
+
+    /** @return list<string> */
+    public static function globalRoles(): array
+    {
+        return [self::RoleUser, self::RoleSuperAdmin];
+    }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -57,6 +82,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'is_active' => 'boolean',
             'password' => 'hashed',
         ];
     }

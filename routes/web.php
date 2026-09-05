@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\AttachmentVersionController;
@@ -35,7 +37,12 @@ Route::middleware('guest')->group(function (): void {
     Route::post('/register', [RegisteredUserController::class, 'store'])->name('register.store');
 });
 
-Route::middleware('auth')->group(function (): void {
+Route::middleware(['auth', 'active'])->group(function (): void {
+    Route::prefix('admin')->name('admin.')->middleware('superadmin')->group(function (): void {
+        Route::get('/', AdminDashboardController::class)->name('dashboard');
+        Route::patch('/users/{user}', [AdminUserController::class, 'update'])->name('users.update');
+    });
+
     Route::get('/', [TeamDashboardController::class, 'index'])->name('dashboard');
     Route::get('/search', GlobalSearchController::class)->name('search');
     Route::get('/reports', ReportController::class)->name('reports.index');

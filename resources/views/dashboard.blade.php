@@ -18,6 +18,9 @@
                 </form>
                 <div class="ml-auto flex items-center gap-3">
                     <span class="hidden rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700 sm:inline">{{ $teams->count() }} tim · {{ $projects->count() }} proyek</span>
+                    @if (auth()->user()->isSuperAdmin())
+                        <a href="{{ route('admin.dashboard') }}" class="rounded-xl bg-amber-100 px-3 py-2.5 text-xs font-extrabold text-amber-800 hover:bg-amber-200">Superadmin</a>
+                    @endif
                     <a href="{{ route('reports.index') }}" class="rounded-xl border border-slate-200 px-3 py-2.5 text-xs font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700">Laporan</a>
                     <a href="{{ route('profile.show') }}" title="Profil saya"><x-current-user-avatar class="h-10 w-10 text-xs" /></a>
                     <form method="POST" action="{{ route('logout') }}">@csrf<button title="Keluar" class="rounded-xl border border-slate-200 p-2.5 text-slate-400 hover:bg-slate-50 hover:text-rose-600"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"/></svg></button></form>
