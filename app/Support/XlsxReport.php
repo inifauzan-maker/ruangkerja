@@ -12,7 +12,7 @@ class XlsxReport
      */
     public function make(array $rows): string
     {
-        $temporaryPath = tempnam(sys_get_temp_dir(), 'ruangkerja-report-');
+        $temporaryPath = tempnam(sys_get_temp_dir(), 'villa-merah-report-');
         if ($temporaryPath === false) {
             throw new RuntimeException('Gagal membuat file laporan sementara.');
         }

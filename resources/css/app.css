@@ -6,6 +6,10 @@
 @theme {
     --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    --color-brand-blue: #123a70;
+    --color-brand-blue-dark: #0b2447;
+    --color-brand-red: #c62828;
+    --color-brand-yellow: #f5c542;
 }
 
 @layer base {
@@ -58,9 +62,9 @@
 
     .task-dropzone.is-over {
         border-radius: .75rem;
-        outline: 2px dashed #059669;
+        outline: 2px dashed #2563eb;
         outline-offset: 4px;
-        background: rgb(209 250 229 / .45);
+        background: rgb(219 234 254 / .55);
     }
 }
 

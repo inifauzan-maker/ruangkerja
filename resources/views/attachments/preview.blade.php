@@ -4,11 +4,11 @@
             <div class="mx-auto flex min-h-16 max-w-6xl items-center gap-3 px-4 py-3 sm:px-6">
                 <a href="{{ url()->previous() }}" class="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 text-slate-500">←</a>
                 <div class="min-w-0 flex-1"><p class="truncate text-xs font-bold text-emerald-700">{{ $board->name }}</p><h1 class="truncate font-extrabold">{{ $attachment->original_name }}</h1></div>
-                <a href="{{ route('attachments.show', $attachment) }}" class="rounded-xl bg-[#153d36] px-4 py-2.5 text-sm font-bold text-white">Download</a>
+                <a href="{{ route('attachments.show', $attachment) }}" class="rounded-xl bg-[#123A70] px-4 py-2.5 text-sm font-bold text-white">Download</a>
             </div>
         </header>
 
-        @if (session('status'))<div data-toast class="fixed right-5 top-20 z-50 rounded-xl bg-[#153d36] px-4 py-3 text-sm font-semibold text-white shadow-xl">{{ session('status') }}</div>@endif
+        @if (session('status'))<div data-toast class="fixed right-5 top-20 z-50 rounded-xl bg-[#123A70] px-4 py-3 text-sm font-semibold text-white shadow-xl">{{ session('status') }}</div>@endif
         @if ($errors->any())<div class="fixed right-5 top-20 z-50 max-w-sm rounded-xl bg-rose-600 px-4 py-3 text-sm font-semibold text-white shadow-xl">{{ $errors->first() }}</div>@endif
 
         <main class="mx-auto grid max-w-6xl gap-5 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_320px]">
@@ -30,7 +30,7 @@
             <aside class="space-y-5">
                 <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                     <h2 class="font-extrabold">Upload versi baru</h2><p class="mt-1 text-xs leading-5 text-slate-400">Ekstensi harus sama. Versi lama tetap tersimpan dalam riwayat.</p>
-                    <form method="POST" action="{{ route('attachments.versions.store', $attachment) }}" enctype="multipart/form-data" class="mt-4 grid gap-3">@csrf<input type="file" name="attachment" required class="min-w-0 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3 text-xs file:mr-2 file:rounded-lg file:border-0 file:bg-white file:px-3 file:py-2 file:font-bold"><button class="rounded-xl bg-[#153d36] px-4 py-2.5 text-sm font-bold text-white">Upload versi</button></form>
+                    <form method="POST" action="{{ route('attachments.versions.store', $attachment) }}" enctype="multipart/form-data" class="mt-4 grid gap-3">@csrf<input type="file" name="attachment" required class="min-w-0 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3 text-xs file:mr-2 file:rounded-lg file:border-0 file:bg-white file:px-3 file:py-2 file:font-bold"><button class="rounded-xl bg-[#123A70] px-4 py-2.5 text-sm font-bold text-white">Upload versi</button></form>
                 </section>
                 <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                     <h2 class="font-extrabold">Riwayat versi</h2>

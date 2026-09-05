@@ -102,7 +102,7 @@ class WhatsappConnectionManagementTest extends TestCase
             return $request->url() === 'https://api.fonnte.com/send'
                 && $request->hasHeader('Authorization', 'fonnte-global-device-key-123456')
                 && $request['target'] === '628123456789'
-                && str_contains($request['message'], 'Tes koneksi TimManager')
+                && str_contains($request['message'], 'Tes koneksi Ruang Kerja _ Villa Merah')
                 && $request['countryCode'] === '0';
         });
     }

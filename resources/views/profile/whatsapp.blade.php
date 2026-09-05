@@ -8,12 +8,12 @@
                     <h1 class="truncate font-extrabold">Koneksi WhatsApp</h1>
                     <p class="truncate text-xs text-slate-400">Notifikasi melalui Fonnte</p>
                 </div>
-                <a href="{{ route('dashboard') }}" class="ml-auto rounded-xl bg-[#153d36] px-4 py-2.5 text-sm font-bold text-white">Beranda</a>
+                <a href="{{ route('dashboard') }}" class="ml-auto rounded-xl bg-[#123A70] px-4 py-2.5 text-sm font-bold text-white">Beranda</a>
             </div>
         </header>
 
         @if (session('status'))
-            <div data-toast class="fixed right-5 top-20 z-[70] rounded-xl bg-[#153d36] px-4 py-3 text-sm font-semibold text-white shadow-xl">✓ {{ session('status') }}</div>
+            <div data-toast class="fixed right-5 top-20 z-[70] rounded-xl bg-[#123A70] px-4 py-3 text-sm font-semibold text-white shadow-xl">✓ {{ session('status') }}</div>
         @endif
         @if ($errors->any())
             <div class="fixed bottom-5 right-5 z-[80] max-w-md rounded-xl bg-rose-600 px-4 py-3 text-sm font-semibold text-white shadow-xl">{{ $errors->first() }}</div>
@@ -42,7 +42,7 @@
 
                     <label class="grid gap-2 text-sm font-bold">
                         Nomor WhatsApp penerima
-                        <input name="recipient_phone" type="tel" required maxlength="16" value="{{ old('recipient_phone', $connection?->recipient_phone) }}" placeholder="+628123456789" class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-emerald-600 focus:bg-white focus:ring-4 focus:ring-emerald-100">
+                        <input name="recipient_phone" type="tel" required maxlength="16" value="{{ old('recipient_phone', $connection?->recipient_phone) }}" placeholder="+628123456789" class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-100">
                         <span class="text-xs font-normal leading-5 text-slate-400">Gunakan kode negara, misalnya +62. Nomor ini menerima notifikasi akun Anda.</span>
                     </label>
 
@@ -72,17 +72,17 @@
                         </label>
                         <div class="mt-4 grid gap-4 sm:grid-cols-3">
                             <label class="grid gap-2 text-sm font-bold">Zona waktu
-                                <select name="timezone" class="rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100">
+                                <select name="timezone" class="rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100">
                                     @foreach (['Asia/Jakarta' => 'WIB - Jakarta', 'Asia/Makassar' => 'WITA - Makassar', 'Asia/Jayapura' => 'WIT - Jayapura', 'UTC' => 'UTC'] as $value => $label)
                                         <option value="{{ $value }}" @selected(old('timezone', $connection?->timezone ?? 'Asia/Jakarta') === $value)>{{ $label }}</option>
                                     @endforeach
                                 </select>
                             </label>
                             <label class="grid gap-2 text-sm font-bold">Mulai
-                                <input name="quiet_hours_start" type="time" required value="{{ old('quiet_hours_start', $connection?->quiet_hours_start ?? '21:00') }}" class="rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100">
+                                <input name="quiet_hours_start" type="time" required value="{{ old('quiet_hours_start', $connection?->quiet_hours_start ?? '21:00') }}" class="rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100">
                             </label>
                             <label class="grid gap-2 text-sm font-bold">Selesai
-                                <input name="quiet_hours_end" type="time" required value="{{ old('quiet_hours_end', $connection?->quiet_hours_end ?? '07:00') }}" class="rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100">
+                                <input name="quiet_hours_end" type="time" required value="{{ old('quiet_hours_end', $connection?->quiet_hours_end ?? '07:00') }}" class="rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100">
                             </label>
                         </div>
                     </section>
@@ -92,7 +92,7 @@
                             <input type="checkbox" name="consent_whatsapp" value="1" @checked(old('consent_whatsapp')) class="mt-1 h-4 w-4 rounded border-sky-300 text-sky-600 focus:ring-sky-500">
                             <span>
                                 <span class="block text-sm font-extrabold text-sky-900">Saya setuju menerima notifikasi WhatsApp</span>
-                                <span class="mt-1 block text-xs leading-5 text-sky-700/75">TimManager boleh mengirim pemberitahuan tugas, mention, pengumuman, dan tenggat ke nomor di atas. Persetujuan dapat dicabut kapan saja.</span>
+                                <span class="mt-1 block text-xs leading-5 text-sky-700/75">Ruang Kerja _ Villa Merah boleh mengirim pemberitahuan tugas, mention, pengumuman, dan tenggat ke nomor di atas. Persetujuan dapat dicabut kapan saja.</span>
                             </span>
                         </label>
                     @else
@@ -107,7 +107,7 @@
                         <span><span class="block text-sm font-extrabold text-emerald-900">Aktifkan pengiriman WhatsApp</span><span class="mt-1 block text-xs leading-5 text-emerald-700/70">Nonaktifkan untuk berhenti menerima notifikasi.</span></span>
                     </label>
 
-                    <button class="w-fit rounded-xl bg-[#153d36] px-5 py-3 text-sm font-bold text-white">Simpan koneksi</button>
+                    <button class="w-fit rounded-xl bg-[#123A70] px-5 py-3 text-sm font-bold text-white">Simpan koneksi</button>
                 </form>
 
                 @if ($connection)
@@ -123,7 +123,7 @@
             </section>
 
             <aside class="grid content-start gap-6">
-                <section class="rounded-3xl bg-[#153d36] p-6 text-white shadow-xl">
+                <section class="rounded-3xl bg-[#123A70] p-6 text-white shadow-xl">
                     <p class="text-xs font-extrabold uppercase tracking-[.15em] text-emerald-200/70">Status Fonnte</p>
                     @if ($connection)
                         <dl class="mt-5 grid gap-4 text-sm">
@@ -147,7 +147,7 @@
                         <li><strong>3.</strong> Berikan persetujuan dan aktifkan pengiriman.</li>
                         <li><strong>4.</strong> Simpan pengaturan lalu kirim pesan uji.</li>
                     </ol>
-                    <p class="mt-4 text-xs leading-5 text-slate-400">Kredensial layanan dikelola oleh administrator RuangKerja.</p>
+                    <p class="mt-4 text-xs leading-5 text-slate-400">Kredensial layanan dikelola oleh administrator Ruang Kerja _ Villa Merah.</p>
                 </section>
             </aside>
         </main>

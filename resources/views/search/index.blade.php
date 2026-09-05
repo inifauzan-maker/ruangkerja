@@ -2,8 +2,8 @@
     <div class="min-h-dvh bg-[#f4f5f3]">
         <header class="border-b border-slate-200 bg-white">
             <div class="mx-auto flex min-h-16 max-w-6xl flex-wrap items-center gap-3 px-4 py-3 sm:px-6">
-                <a href="{{ route('dashboard') }}" class="grid h-10 w-10 place-items-center rounded-xl bg-[#f2b84b] font-extrabold text-[#153d36]">R</a>
-                <form method="GET" action="{{ route('search') }}" class="flex min-w-0 flex-1 gap-2"><input type="search" name="q" value="{{ $term }}" required maxlength="100" autofocus class="min-w-0 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-emerald-600" placeholder="Cari tugas, proyek, atau file..."><button class="rounded-xl bg-[#153d36] px-4 py-2.5 text-sm font-bold text-white">Cari</button></form>
+                <a href="{{ route('dashboard') }}" class="grid h-10 w-10 place-items-center rounded-xl bg-[#F5C542] text-xs font-extrabold text-[#123A70]">VM</a>
+                <form method="GET" action="{{ route('search') }}" class="flex min-w-0 flex-1 gap-2"><input type="search" name="q" value="{{ $term }}" required maxlength="100" autofocus class="min-w-0 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-blue-600" placeholder="Cari tugas, proyek, atau file..."><button class="rounded-xl bg-[#123A70] px-4 py-2.5 text-sm font-bold text-white">Cari</button></form>
                 <x-current-user-avatar class="h-10 w-10 text-xs" />
             </div>
         </header>

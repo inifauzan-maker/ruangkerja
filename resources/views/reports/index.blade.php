@@ -3,7 +3,7 @@
     <div class="min-h-dvh bg-[#f4f5f3]">
         <header class="border-b border-slate-200 bg-white">
             <div class="mx-auto flex min-h-16 max-w-7xl flex-wrap items-center gap-3 px-4 py-3 sm:px-6">
-                <a href="{{ route('dashboard') }}" class="grid h-10 w-10 place-items-center rounded-xl bg-[#f2b84b] font-extrabold text-[#153d36]">R</a>
+                <a href="{{ route('dashboard') }}" class="grid h-10 w-10 place-items-center rounded-xl bg-[#F5C542] text-xs font-extrabold text-[#123A70]">VM</a>
                 <div class="min-w-0 flex-1"><p class="text-xs font-bold text-emerald-700">Dashboard analitik</p><h1 class="text-lg font-extrabold">Laporan tim dan proyek</h1></div>
                 <a href="{{ route('dashboard') }}" class="rounded-xl border border-slate-200 px-3 py-2 text-xs font-bold text-slate-500">Beranda</a>
                 <x-current-user-avatar class="h-10 w-10 text-xs" />
@@ -15,7 +15,7 @@
                 <form method="GET" action="{{ route('reports.index') }}" class="grid flex-1 gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:grid-cols-[1fr_160px_auto]">
                     <label class="grid gap-1.5 text-xs font-bold text-slate-500">Proyek<select name="board" class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm"><option value="">Semua proyek</option>@foreach ($report['boards'] as $reportBoard)<option value="{{ $reportBoard->id }}" @selected((int) $report['selected_board_id'] === $reportBoard->id)>{{ $reportBoard->name }}</option>@endforeach</select></label>
                     <label class="grid gap-1.5 text-xs font-bold text-slate-500">Periode aktivitas<select name="days" class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm"><option value="7" @selected($report['days'] === 7)>7 hari</option><option value="30" @selected($report['days'] === 30)>30 hari</option><option value="90" @selected($report['days'] === 90)>90 hari</option></select></label>
-                    <button class="self-end rounded-xl bg-[#153d36] px-5 py-2.5 text-sm font-bold text-white">Terapkan</button>
+                    <button class="self-end rounded-xl bg-[#123A70] px-5 py-2.5 text-sm font-bold text-white">Terapkan</button>
                 </form>
                 <div class="flex gap-2"><a href="{{ route('reports.pdf', ['board' => $report['selected_board_id'], 'days' => $report['days']]) }}" class="rounded-xl border border-rose-200 bg-white px-4 py-3 text-sm font-bold text-rose-600">PDF</a><a href="{{ route('reports.excel', ['board' => $report['selected_board_id'], 'days' => $report['days']]) }}" class="rounded-xl border border-emerald-200 bg-white px-4 py-3 text-sm font-bold text-emerald-700">Excel</a></div>
             </section>

@@ -19,9 +19,9 @@ class WhatsappConnectionTestController extends Controller
 
         try {
             $messageId = $sendWhatsappMessage->execute($connection, [
-                'event' => 'Tes koneksi TimManager',
+                'event' => 'Tes koneksi Ruang Kerja _ Villa Merah',
                 'subject' => 'Koneksi WhatsApp untuk '.$request->user()->name.' berhasil.',
-                'project' => 'Akun TimManager',
+                'project' => 'Akun Ruang Kerja _ Villa Merah',
                 'url' => route('dashboard'),
             ]);
 

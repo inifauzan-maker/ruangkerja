@@ -7,7 +7,7 @@
                     <h1 class="truncate font-extrabold">Riwayat WhatsApp</h1>
                     <p class="text-xs text-slate-400">Audit pengiriman notifikasi Anda</p>
                 </div>
-                <a href="{{ route('dashboard') }}" class="ml-auto rounded-xl bg-[#153d36] px-4 py-2.5 text-sm font-bold text-white">Beranda</a>
+                <a href="{{ route('dashboard') }}" class="ml-auto rounded-xl bg-[#123A70] px-4 py-2.5 text-sm font-bold text-white">Beranda</a>
             </div>
         </header>
 
@@ -61,7 +61,7 @@
                             <p class="font-bold text-slate-700">Dijadwalkan</p>
                             <p class="mt-1">{{ $log->scheduled_for->timezone(auth()->user()->whatsappConnection?->timezone ?? config('app.timezone'))->format('d M Y, H:i') }}</p>
                         </div>
-                        <a href="{{ $log->url }}" class="inline-flex w-fit items-center rounded-xl border border-slate-200 px-3 py-2 text-sm font-bold text-emerald-700 hover:bg-emerald-50">Buka tugas</a>
+                        <a href="{{ $log->url }}" class="inline-flex w-fit items-center rounded-xl border border-slate-200 px-3 py-2 text-sm font-bold text-emerald-700 hover:bg-blue-50">Buka tugas</a>
                     </article>
                 @empty
                     <div class="px-6 py-16 text-center">

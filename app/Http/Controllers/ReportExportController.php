@@ -17,7 +17,7 @@ class ReportExportController extends Controller
     ): Response {
         $report = $this->report($request, $buildReportData);
         $lines = [
-            'RUANGKERJA - LAPORAN PROYEK',
+            'RUANG KERJA _ VILLA MERAH - LAPORAN PROYEK',
             'Dibuat: '.$report['generated_at']->format('d M Y H:i'),
             'Periode aktivitas: '.$report['days'].' hari',
             '',
@@ -49,7 +49,7 @@ class ReportExportController extends Controller
 
         return response($pdfReport->make($lines), 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="laporan-ruangkerja.pdf"',
+            'Content-Disposition' => 'attachment; filename="laporan-villa-merah.pdf"',
             'X-Content-Type-Options' => 'nosniff',
         ]);
     }
@@ -61,7 +61,7 @@ class ReportExportController extends Controller
     ): Response {
         $report = $this->report($request, $buildReportData);
         $rows = [
-            ['LAPORAN RUANGKERJA'],
+            ['LAPORAN RUANG KERJA _ VILLA MERAH'],
             ['Dibuat', $report['generated_at']->format('Y-m-d H:i')],
             ['Periode', $report['days'].' hari'],
             [],
@@ -88,7 +88,7 @@ class ReportExportController extends Controller
 
         return response($xlsxReport->make($rows), 200, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'Content-Disposition' => 'attachment; filename="laporan-ruangkerja.xlsx"',
+            'Content-Disposition' => 'attachment; filename="laporan-villa-merah.xlsx"',
             'X-Content-Type-Options' => 'nosniff',
         ]);
     }

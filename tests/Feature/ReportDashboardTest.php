@@ -74,13 +74,13 @@ class ReportDashboardTest extends TestCase
         $pdf = $this->actingAs($owner)->get(route('reports.pdf'));
         $pdf->assertOk()
             ->assertHeader('content-type', 'application/pdf')
-            ->assertHeader('content-disposition', 'attachment; filename="laporan-ruangkerja.pdf"');
+            ->assertHeader('content-disposition', 'attachment; filename="laporan-villa-merah.pdf"');
         $this->assertStringStartsWith('%PDF-1.4', $pdf->getContent());
 
         $excel = $this->actingAs($owner)->get(route('reports.excel'));
         $excel->assertOk()
             ->assertHeader('content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-            ->assertHeader('content-disposition', 'attachment; filename="laporan-ruangkerja.xlsx"');
+            ->assertHeader('content-disposition', 'attachment; filename="laporan-villa-merah.xlsx"');
         $this->assertStringStartsWith('PK', $excel->getContent());
     }
 

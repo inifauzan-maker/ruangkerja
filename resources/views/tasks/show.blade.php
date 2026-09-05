@@ -29,7 +29,7 @@
         </header>
 
         @if (session('status'))
-            <div data-toast class="fixed right-5 top-20 z-50 rounded-xl bg-[#153d36] px-4 py-3 text-sm font-semibold text-white shadow-xl">{{ session('status') }}</div>
+            <div data-toast class="fixed right-5 top-20 z-50 rounded-xl bg-[#123A70] px-4 py-3 text-sm font-semibold text-white shadow-xl">{{ session('status') }}</div>
         @endif
         @if ($errors->any())
             <div class="fixed right-5 top-20 z-50 max-w-sm rounded-xl bg-rose-600 px-4 py-3 text-sm font-semibold text-white shadow-xl">{{ $errors->first() }}</div>
@@ -49,10 +49,10 @@
                             <span class="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-600">{{ $task->list->title }}</span>
                         </div>
                         <label class="grid gap-2 text-sm font-bold">Judul
-                            <input name="title" required maxlength="150" value="{{ old('title', $task->title) }}" class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100">
+                            <input name="title" required maxlength="150" value="{{ old('title', $task->title) }}" class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100">
                         </label>
                         <label class="grid gap-2 text-sm font-bold">Deskripsi
-                            <textarea name="description" maxlength="2000" rows="4" class="resize-y rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100">{{ old('description', $task->description) }}</textarea>
+                            <textarea name="description" maxlength="2000" rows="4" class="resize-y rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100">{{ old('description', $task->description) }}</textarea>
                         </label>
                         <div class="grid gap-4 sm:grid-cols-3">
                             <label class="grid gap-2 text-sm font-bold">Status
@@ -65,7 +65,7 @@
                                 <input type="date" name="due_at" value="{{ $task->due_at?->format('Y-m-d') }}" class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
                             </label>
                         </div>
-                        <button class="justify-self-start rounded-xl bg-[#153d36] px-5 py-3 text-sm font-bold text-white hover:bg-[#205148]">Simpan perubahan</button>
+                        <button class="justify-self-start rounded-xl bg-[#123A70] px-5 py-3 text-sm font-bold text-white hover:bg-[#1D4E89]">Simpan perubahan</button>
                     </form>
                 </section>
 
@@ -84,21 +84,21 @@
                             </div>
                         @endforeach
                     </div>
-                    <form method="POST" action="{{ route('boards.tasks.checklist.store', [$board, $task]) }}" class="mt-4 flex gap-2">@csrf<input name="title" required maxlength="255" placeholder="Tambahkan checklist..." class="min-w-0 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-600"><button class="rounded-xl bg-emerald-50 px-4 text-sm font-bold text-emerald-700">Tambah</button></form>
+                    <form method="POST" action="{{ route('boards.tasks.checklist.store', [$board, $task]) }}" class="mt-4 flex gap-2">@csrf<input name="title" required maxlength="255" placeholder="Tambahkan checklist..." class="min-w-0 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-blue-600"><button class="rounded-xl bg-emerald-50 px-4 text-sm font-bold text-emerald-700">Tambah</button></form>
                 </section>
 
                 <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
                     <h2 class="font-extrabold">File tugas</h2>
                     <x-attachments :attachments="$task->attachments" />
-                    <form method="POST" action="{{ route('boards.tasks.attachments.store', [$board, $task]) }}" enctype="multipart/form-data" class="mt-4 grid gap-3 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 sm:grid-cols-[1fr_auto]">@csrf<input type="file" name="attachments[]" multiple required accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.jpg,.jpeg,.png,.webp,.zip" class="min-w-0 text-xs file:mr-3 file:rounded-lg file:border-0 file:bg-white file:px-3 file:py-2 file:font-bold"><button class="rounded-xl bg-[#153d36] px-4 py-2 text-sm font-bold text-white">Upload file</button><p class="text-[11px] text-slate-400 sm:col-span-2">Maksimal 5 file, masing-masing 10 MB.</p></form>
+                    <form method="POST" action="{{ route('boards.tasks.attachments.store', [$board, $task]) }}" enctype="multipart/form-data" class="mt-4 grid gap-3 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 sm:grid-cols-[1fr_auto]">@csrf<input type="file" name="attachments[]" multiple required accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.jpg,.jpeg,.png,.webp,.zip" class="min-w-0 text-xs file:mr-3 file:rounded-lg file:border-0 file:bg-white file:px-3 file:py-2 file:font-bold"><button class="rounded-xl bg-[#123A70] px-4 py-2 text-sm font-bold text-white">Upload file</button><p class="text-[11px] text-slate-400 sm:col-span-2">Maksimal 5 file, masing-masing 10 MB.</p></form>
                 </section>
 
                 <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
                     <h2 class="font-extrabold">Komentar</h2>
-                    <form method="POST" action="{{ route('boards.tasks.comments.store', [$board, $task]) }}" class="mt-4 grid gap-3">@csrf<textarea name="body" required maxlength="3000" rows="3" placeholder="Tulis komentar..." class="resize-y rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-600"></textarea><details class="rounded-xl border border-slate-200 p-3"><summary class="cursor-pointer text-xs font-bold text-slate-500">Mention anggota</summary><div class="mt-3 flex flex-wrap gap-2">@foreach ($teamMembers as $member)<label class="cursor-pointer rounded-full bg-slate-100 px-3 py-2 text-xs font-semibold"><input type="checkbox" name="mention_ids[]" value="{{ $member->id }}" class="mr-1 accent-emerald-700"> {{ '@'.$member->name }}</label>@endforeach</div></details><button class="justify-self-start rounded-xl bg-[#153d36] px-5 py-2.5 text-sm font-bold text-white">Kirim komentar</button></form>
+                    <form method="POST" action="{{ route('boards.tasks.comments.store', [$board, $task]) }}" class="mt-4 grid gap-3">@csrf<textarea name="body" required maxlength="3000" rows="3" placeholder="Tulis komentar..." class="resize-y rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-blue-600"></textarea><details class="rounded-xl border border-slate-200 p-3"><summary class="cursor-pointer text-xs font-bold text-slate-500">Mention anggota</summary><div class="mt-3 flex flex-wrap gap-2">@foreach ($teamMembers as $member)<label class="cursor-pointer rounded-full bg-slate-100 px-3 py-2 text-xs font-semibold"><input type="checkbox" name="mention_ids[]" value="{{ $member->id }}" class="mr-1 accent-blue-700"> {{ '@'.$member->name }}</label>@endforeach</div></details><button class="justify-self-start rounded-xl bg-[#123A70] px-5 py-2.5 text-sm font-bold text-white">Kirim komentar</button></form>
                     <div class="mt-6 grid gap-3">
                         @forelse ($task->comments as $comment)
-                            <article class="rounded-xl bg-slate-50 p-4"><div class="flex items-start gap-3"><span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#153d36] text-[10px] font-extrabold text-white">{{ str($comment->user->name)->substr(0, 2)->upper() }}</span><div class="min-w-0 flex-1"><div class="flex flex-wrap items-center gap-2"><span class="text-sm font-bold">{{ $comment->user->name }}</span><span class="text-[10px] text-slate-400">{{ $comment->created_at->diffForHumans() }}</span>@if ($comment->user_id === auth()->id() || $board->team->canManageProjects(auth()->user()))<form method="POST" action="{{ route('boards.tasks.comments.destroy', [$board, $task, $comment]) }}" class="ml-auto">@csrf @method('DELETE')<button class="text-xs text-slate-300 hover:text-rose-600">Hapus</button></form>@endif</div><p class="mt-2 whitespace-pre-line text-sm leading-6 text-slate-600">{{ $comment->body }}</p>@if ($comment->mentions->isNotEmpty())<div class="mt-2 flex flex-wrap gap-1">@foreach ($comment->mentions as $mentioned)<span class="rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-bold text-emerald-700">{{ '@'.$mentioned->name }}</span>@endforeach</div>@endif</div></div></article>
+                            <article class="rounded-xl bg-slate-50 p-4"><div class="flex items-start gap-3"><span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#123A70] text-[10px] font-extrabold text-white">{{ str($comment->user->name)->substr(0, 2)->upper() }}</span><div class="min-w-0 flex-1"><div class="flex flex-wrap items-center gap-2"><span class="text-sm font-bold">{{ $comment->user->name }}</span><span class="text-[10px] text-slate-400">{{ $comment->created_at->diffForHumans() }}</span>@if ($comment->user_id === auth()->id() || $board->team->canManageProjects(auth()->user()))<form method="POST" action="{{ route('boards.tasks.comments.destroy', [$board, $task, $comment]) }}" class="ml-auto">@csrf @method('DELETE')<button class="text-xs text-slate-300 hover:text-rose-600">Hapus</button></form>@endif</div><p class="mt-2 whitespace-pre-line text-sm leading-6 text-slate-600">{{ $comment->body }}</p>@if ($comment->mentions->isNotEmpty())<div class="mt-2 flex flex-wrap gap-1">@foreach ($comment->mentions as $mentioned)<span class="rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-bold text-emerald-700">{{ '@'.$mentioned->name }}</span>@endforeach</div>@endif</div></div></article>
                         @empty
                             <p class="rounded-xl bg-slate-50 p-6 text-center text-sm text-slate-400">Belum ada komentar.</p>
                         @endforelse
@@ -111,7 +111,7 @@
                     <h2 class="font-extrabold">Penanggung jawab</h2>
                     <form method="POST" action="{{ route('boards.tasks.assignees.update', [$board, $task]) }}" class="mt-4 grid gap-2">@csrf @method('PUT')
                         @foreach ($teamMembers as $member)
-                            <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 text-sm font-semibold"><input type="checkbox" name="assignee_ids[]" value="{{ $member->id }}" @checked($task->assignees->contains('id', $member->id)) class="h-4 w-4 rounded accent-emerald-700"><span class="grid h-8 w-8 place-items-center rounded-full bg-[#153d36] text-[9px] font-extrabold text-white">{{ str($member->name)->substr(0, 2)->upper() }}</span><span class="truncate">{{ $member->name }}</span></label>
+                            <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 text-sm font-semibold"><input type="checkbox" name="assignee_ids[]" value="{{ $member->id }}" @checked($task->assignees->contains('id', $member->id)) class="h-4 w-4 rounded accent-blue-700"><span class="grid h-8 w-8 place-items-center rounded-full bg-[#123A70] text-[9px] font-extrabold text-white">{{ str($member->name)->substr(0, 2)->upper() }}</span><span class="truncate">{{ $member->name }}</span></label>
                         @endforeach
                         <button class="mt-2 rounded-xl bg-emerald-50 px-4 py-2.5 text-sm font-bold text-emerald-700">Simpan assignee</button>
                     </form>
