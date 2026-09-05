@@ -10,6 +10,69 @@ const setSidebarOpen = (isOpen) => {
 sidebarToggle?.addEventListener('click', () => setSidebarOpen(true));
 sidebarBackdrop?.addEventListener('click', () => setSidebarOpen(false));
 
+const adminSidebar = document.querySelector('#admin-sidebar');
+const adminMainShell = document.querySelector('#admin-main-shell');
+const adminSidebarBackdrop = document.querySelector('#admin-sidebar-backdrop');
+const adminMobileToggle = document.querySelector('#admin-mobile-toggle');
+const adminSidebarClose = document.querySelector('#admin-sidebar-close');
+const adminCollapseToggle = document.querySelector('#admin-collapse-toggle');
+const adminCollapseIcon = document.querySelector('#admin-collapse-icon');
+const adminSidebarLabels = document.querySelectorAll('[data-admin-sidebar-label]');
+
+const setAdminMobileOpen = (isOpen) => {
+    adminSidebar?.classList.toggle('-translate-x-full', !isOpen);
+    adminSidebarBackdrop?.classList.toggle('hidden', !isOpen);
+    adminMobileToggle?.setAttribute('aria-expanded', String(isOpen));
+    document.body.classList.toggle('overflow-hidden', isOpen && window.innerWidth < 1024);
+};
+
+const setAdminSidebarCollapsed = (isCollapsed) => {
+    adminSidebar?.classList.toggle('lg:w-20', isCollapsed);
+    adminSidebar?.classList.toggle('lg:w-[260px]', !isCollapsed);
+    adminMainShell?.classList.toggle('lg:pl-20', isCollapsed);
+    adminMainShell?.classList.toggle('lg:pl-[260px]', !isCollapsed);
+    adminCollapseIcon?.classList.toggle('rotate-180', isCollapsed);
+    adminCollapseToggle?.setAttribute('aria-expanded', String(!isCollapsed));
+    adminCollapseToggle?.setAttribute('aria-label', isCollapsed ? 'Perbesar sidebar' : 'Perkecil sidebar');
+    adminSidebarLabels.forEach((label) => label.classList.toggle('lg:hidden', isCollapsed));
+
+    try {
+        window.localStorage.setItem('admin-sidebar-collapsed', String(isCollapsed));
+    } catch {
+        // The layout still works when browser storage is unavailable.
+    }
+};
+
+if (adminSidebar) {
+    let isAdminSidebarCollapsed = false;
+
+    try {
+        isAdminSidebarCollapsed = window.localStorage.getItem('admin-sidebar-collapsed') === 'true';
+    } catch {
+        isAdminSidebarCollapsed = false;
+    }
+
+    setAdminSidebarCollapsed(isAdminSidebarCollapsed);
+
+    adminMobileToggle?.addEventListener('click', () => setAdminMobileOpen(true));
+    adminSidebarClose?.addEventListener('click', () => setAdminMobileOpen(false));
+    adminSidebarBackdrop?.addEventListener('click', () => setAdminMobileOpen(false));
+    adminCollapseToggle?.addEventListener('click', () => {
+        isAdminSidebarCollapsed = !isAdminSidebarCollapsed;
+        setAdminSidebarCollapsed(isAdminSidebarCollapsed);
+    });
+
+    adminSidebar.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', () => setAdminMobileOpen(false));
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            setAdminMobileOpen(false);
+        }
+    });
+}
+
 const taskModal = document.querySelector('#task-modal');
 const taskListInput = document.querySelector('#task-list-id');
 const taskTitleInput = document.querySelector('#task-title');
