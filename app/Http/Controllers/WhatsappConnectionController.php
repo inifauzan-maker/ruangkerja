@@ -40,10 +40,6 @@ class WhatsappConnectionController extends Controller
             'last_error_message' => null,
         ];
 
-        if ($request->filled('api_key')) {
-            $attributes['access_token'] = $request->string('api_key')->trim()->toString();
-        }
-
         if ($isActive && $hasFreshConsent) {
             $attributes['consented_at'] = now();
             $attributes['opted_out_at'] = null;
@@ -59,7 +55,7 @@ class WhatsappConnectionController extends Controller
 
         $status = $isActive
             ? 'Koneksi Fonnte berhasil disimpan.'
-            : 'Notifikasi WhatsApp dinonaktifkan tanpa menghapus API key.';
+            : 'Notifikasi WhatsApp berhasil dinonaktifkan.';
 
         return redirect()->route('profile.whatsapp.show')->with('status', $status);
     }

@@ -15,7 +15,6 @@ class WhatsappConnectionFactory extends Factory
         return [
             'user_id' => User::factory(),
             'phone_number_id' => 'fonnte',
-            'access_token' => 'fonnte_'.fake()->regexify('[A-Za-z0-9]{64}'),
             'recipient_phone' => '628'.fake()->numerify('##########'),
             'template_name' => 'plain_text',
             'template_language' => 'id',

@@ -14,6 +14,12 @@ class SendWhatsappMessage
      */
     public function execute(WhatsappConnection $connection, array $parameters): string
     {
+        $apiKey = config('services.fonnte.api_key');
+
+        if (! is_string($apiKey) || trim($apiKey) === '') {
+            throw new RuntimeException('API key Fonnte global belum dikonfigurasi oleh administrator.');
+        }
+
         $message = implode("\n", [
             '*'.$parameters['event'].'*',
             $parameters['subject'],
@@ -21,7 +27,7 @@ class SendWhatsappMessage
             'Buka: '.$parameters['url'],
         ]);
 
-        $response = Http::withHeaders(['Authorization' => $connection->access_token])
+        $response = Http::withHeaders(['Authorization' => trim($apiKey)])
             ->acceptJson()
             ->asForm()
             ->connectTimeout(5)

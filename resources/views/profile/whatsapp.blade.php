@@ -6,7 +6,7 @@
                 <span class="grid h-10 w-10 place-items-center rounded-xl bg-emerald-600 font-extrabold text-white">W</span>
                 <div class="min-w-0">
                     <h1 class="truncate font-extrabold">Koneksi WhatsApp</h1>
-                    <p class="truncate text-xs text-slate-400">Fonnte API per pengguna</p>
+                    <p class="truncate text-xs text-slate-400">Notifikasi melalui Fonnte</p>
                 </div>
                 <a href="{{ route('dashboard') }}" class="ml-auto rounded-xl bg-[#153d36] px-4 py-2.5 text-sm font-bold text-white">Beranda</a>
             </div>
@@ -23,9 +23,9 @@
             <section class="min-w-0 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
                 <div class="flex flex-col gap-4 sm:flex-row sm:items-start">
                     <div class="min-w-0 flex-1">
-                        <p class="text-xs font-extrabold uppercase tracking-[.15em] text-emerald-700">Kredensial Fonnte</p>
-                        <h2 class="mt-2 text-2xl font-extrabold">Hubungkan dengan API key</h2>
-                        <p class="mt-2 text-sm leading-6 text-slate-500">API key disimpan terenkripsi dan tidak pernah ditampilkan kembali.</p>
+                        <p class="text-xs font-extrabold uppercase tracking-[.15em] text-emerald-700">Pengaturan penerima</p>
+                        <h2 class="mt-2 text-2xl font-extrabold">Hubungkan nomor WhatsApp</h2>
+                        <p class="mt-2 text-sm leading-6 text-slate-500">API key Fonnte dikelola secara global oleh administrator.</p>
                     </div>
                     @if ($connection?->is_active && $connection->hasNotificationConsent())
                         <span class="w-fit rounded-full bg-emerald-100 px-3 py-1.5 text-xs font-extrabold text-emerald-700">● Koneksi aktif</span>
@@ -39,12 +39,6 @@
                 <form method="POST" action="{{ route('profile.whatsapp.update') }}" class="mt-7 grid gap-6">
                     @csrf
                     @method('PUT')
-
-                    <label class="grid gap-2 text-sm font-bold">
-                        API key Fonnte
-                        <input name="api_key" type="password" {{ $connection ? '' : 'required' }} minlength="10" maxlength="4096" autocomplete="new-password" placeholder="{{ $connection ? 'Kosongkan untuk mempertahankan API key saat ini' : 'Tempel token perangkat dari dashboard Fonnte' }}" class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-emerald-600 focus:bg-white focus:ring-4 focus:ring-emerald-100">
-                        <span class="text-xs font-normal leading-5 text-slate-400">Gunakan token perangkat, bukan kata sandi akun Fonnte.</span>
-                    </label>
 
                     <label class="grid gap-2 text-sm font-bold">
                         Nomor WhatsApp penerima
@@ -104,13 +98,13 @@
                     @else
                         <div class="rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-600">
                             <p class="font-extrabold text-slate-800">Persetujuan tercatat</p>
-                            <p class="mt-1 text-xs leading-5 text-slate-500">Diberikan {{ $connection->consented_at->timezone($connection->timezone)->format('d M Y, H:i') }}. Nonaktifkan pengiriman untuk mencabut persetujuan tanpa menghapus API key.</p>
+                            <p class="mt-1 text-xs leading-5 text-slate-500">Diberikan {{ $connection->consented_at->timezone($connection->timezone)->format('d M Y, H:i') }}. Nonaktifkan pengiriman untuk mencabut persetujuan.</p>
                         </div>
                     @endif
 
                     <label class="flex cursor-pointer items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
                         <input type="checkbox" name="is_active" value="1" @checked(old('is_active', $connection?->is_active ?? true)) class="mt-1 h-4 w-4 rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500">
-                        <span><span class="block text-sm font-extrabold text-emerald-900">Aktifkan pengiriman WhatsApp</span><span class="mt-1 block text-xs leading-5 text-emerald-700/70">Nonaktifkan untuk opt-out tanpa menghapus API key.</span></span>
+                        <span><span class="block text-sm font-extrabold text-emerald-900">Aktifkan pengiriman WhatsApp</span><span class="mt-1 block text-xs leading-5 text-emerald-700/70">Nonaktifkan untuk berhenti menerima notifikasi.</span></span>
                     </label>
 
                     <button class="w-fit rounded-xl bg-[#153d36] px-5 py-3 text-sm font-bold text-white">Simpan koneksi</button>
@@ -121,7 +115,7 @@
                         <form method="POST" action="{{ route('profile.whatsapp.test') }}">@csrf
                             <button class="rounded-xl bg-emerald-600 px-5 py-3 text-sm font-bold text-white">Kirim pesan uji</button>
                         </form>
-                        <form method="POST" action="{{ route('profile.whatsapp.destroy') }}" onsubmit="return confirm('Hapus koneksi dan API key WhatsApp Anda?')">@csrf @method('DELETE')
+                        <form method="POST" action="{{ route('profile.whatsapp.destroy') }}" onsubmit="return confirm('Hapus nomor dan pengaturan WhatsApp Anda?')">@csrf @method('DELETE')
                             <button class="rounded-xl px-5 py-3 text-sm font-bold text-rose-600 hover:bg-rose-50">Putuskan koneksi</button>
                         </form>
                     </div>
@@ -141,19 +135,19 @@
                             <div class="mt-5 rounded-2xl bg-rose-500/15 p-4 text-xs leading-5 text-rose-100"><p class="font-extrabold">Kesalahan terakhir</p><p class="mt-1 break-words">{{ $connection->last_error_message }}</p></div>
                         @endif
                     @else
-                        <p class="mt-4 text-sm leading-6 text-white/60">Simpan API key terlebih dahulu untuk melihat status.</p>
+                        <p class="mt-4 text-sm leading-6 text-white/60">Simpan nomor WhatsApp terlebih dahulu untuk melihat status.</p>
                     @endif
                 </section>
 
                 <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                    <p class="text-xs font-extrabold uppercase tracking-[.15em] text-emerald-700">Persiapan Fonnte</p>
+                    <p class="text-xs font-extrabold uppercase tracking-[.15em] text-emerald-700">Cara mengaktifkan</p>
                     <ol class="mt-4 grid gap-3 text-sm leading-6 text-slate-600">
-                        <li><strong>1.</strong> Daftar dan masuk ke dashboard Fonnte.</li>
-                        <li><strong>2.</strong> Tambahkan perangkat lalu hubungkan WhatsApp melalui QR.</li>
-                        <li><strong>3.</strong> Salin token perangkat sebagai API key.</li>
-                        <li><strong>4.</strong> Simpan koneksi dan kirim pesan uji.</li>
+                        <li><strong>1.</strong> Masukkan nomor WhatsApp penerima.</li>
+                        <li><strong>2.</strong> Pilih jenis notifikasi yang ingin diterima.</li>
+                        <li><strong>3.</strong> Berikan persetujuan dan aktifkan pengiriman.</li>
+                        <li><strong>4.</strong> Simpan pengaturan lalu kirim pesan uji.</li>
                     </ol>
-                    <a href="https://docs.fonnte.com/api-send-message/" target="_blank" rel="noopener noreferrer" class="mt-4 inline-flex text-sm font-extrabold text-emerald-700 hover:text-emerald-800">Buka dokumentasi Fonnte ↗</a>
+                    <p class="mt-4 text-xs leading-5 text-slate-400">Kredensial layanan dikelola oleh administrator RuangKerja.</p>
                 </section>
             </aside>
         </main>

@@ -18,6 +18,7 @@ class SendWhatsappNotificationTest extends TestCase
 
     public function test_records_successful_delivery_in_notification_log(): void
     {
+        config()->set('services.fonnte.api_key', 'fonnte-global-device-key-123456');
         Http::preventStrayRequests();
         Http::fake([
             'https://api.fonnte.com/send' => Http::response(['status' => true, 'id' => ['80367170']]),
@@ -36,13 +37,12 @@ class SendWhatsappNotificationTest extends TestCase
 
     public function test_records_failed_delivery_without_exposing_credentials(): void
     {
+        config()->set('services.fonnte.api_key', 'fonnte-global-secret-key-not-for-logs-123456');
         Http::preventStrayRequests();
         Http::fake([
             'https://api.fonnte.com/send' => Http::response(['status' => false, 'reason' => 'token invalid']),
         ]);
-        $connection = WhatsappConnection::factory()->for(User::factory())->create([
-            'access_token' => 'fonnte-secret-key-not-for-logs-123456',
-        ]);
+        $connection = WhatsappConnection::factory()->for(User::factory())->create();
         $log = WhatsappNotificationLog::factory()->for($connection, 'connection')->create();
         $job = $this->makeJob($connection, $log);
 
@@ -55,7 +55,7 @@ class SendWhatsappNotificationTest extends TestCase
 
         $log->refresh();
         $this->assertSame(WhatsappNotificationLog::StatusFailed, $log->status);
-        $this->assertStringNotContainsString('fonnte-secret-key', (string) $log->error_message);
+        $this->assertStringNotContainsString('fonnte-global-secret-key', (string) $log->error_message);
         $this->assertNotNull($log->error_at);
         $this->assertSame(3, $job->tries);
         $this->assertSame([10, 60, 300], $job->backoff);

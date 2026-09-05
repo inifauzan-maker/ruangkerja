@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -24,18 +23,6 @@ class UpdateWhatsappConnectionRequest extends FormRequest
             && (! $connection?->hasNotificationConsent());
 
         return [
-            'api_key' => [
-                Rule::requiredIf($connection === null),
-                'nullable',
-                'string',
-                'min:10',
-                'max:4096',
-                function (string $attribute, mixed $value, Closure $fail): void {
-                    if (is_string($value) && preg_match('/\s/', $value)) {
-                        $fail('API key tidak boleh mengandung spasi.');
-                    }
-                },
-            ],
             'recipient_phone' => ['required', 'string', 'regex:/^\+?[1-9][0-9]{7,14}$/'],
             'is_active' => ['sometimes', 'boolean'],
             'consent_whatsapp' => [Rule::when($requiresConsent, ['required', 'accepted'], ['nullable'])],
@@ -55,8 +42,6 @@ class UpdateWhatsappConnectionRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'api_key.required' => 'API key wajib diisi saat membuat koneksi.',
-            'api_key.min' => 'API key tampak terlalu pendek.',
             'consent_whatsapp.required' => 'Persetujuan WhatsApp wajib diberikan untuk mengaktifkan notifikasi.',
             'consent_whatsapp.accepted' => 'Persetujuan WhatsApp wajib diberikan untuk mengaktifkan notifikasi.',
             'recipient_phone.regex' => 'Nomor penerima harus memakai format internasional, contoh +628123456789.',

@@ -20,7 +20,6 @@ class WhatsappConsentTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->put(route('profile.whatsapp.update'), [
-            'api_key' => 'fonnte-valid-device-key-123456789',
             'recipient_phone' => '+628123456789',
             'is_active' => '1',
         ]);
@@ -31,24 +30,20 @@ class WhatsappConsentTest extends TestCase
         $this->assertNull($user->whatsappConnection);
     }
 
-    public function test_user_can_opt_out_without_deleting_encrypted_api_key(): void
+    public function test_user_can_opt_out_without_deleting_connection(): void
     {
         $user = User::factory()->create();
-        $connection = WhatsappConnection::factory()->for($user)->create([
-            'access_token' => 'fonnte-existing-device-key-12345',
-        ]);
+        $connection = WhatsappConnection::factory()->for($user)->create();
 
         $response = $this->actingAs($user)->put(route('profile.whatsapp.update'), [
-            'api_key' => '',
             'recipient_phone' => '+628111111111',
         ]);
 
         $response->assertRedirect(route('profile.whatsapp.show'))
-            ->assertSessionHas('status', 'Notifikasi WhatsApp dinonaktifkan tanpa menghapus API key.');
+            ->assertSessionHas('status', 'Notifikasi WhatsApp berhasil dinonaktifkan.');
         $connection->refresh();
         $this->assertFalse($connection->is_active);
         $this->assertNotNull($connection->opted_out_at);
-        $this->assertSame('fonnte-existing-device-key-12345', $connection->access_token);
         $this->assertFalse($connection->hasNotificationConsent());
     }
 
@@ -62,13 +57,11 @@ class WhatsappConsentTest extends TestCase
         ]);
 
         $this->actingAs($user)->put(route('profile.whatsapp.update'), [
-            'api_key' => '',
             'recipient_phone' => '+628123456789',
             'is_active' => '1',
         ])->assertSessionHasErrors('consent_whatsapp');
 
         $response = $this->actingAs($user)->put(route('profile.whatsapp.update'), [
-            'api_key' => '',
             'recipient_phone' => '+628123456789',
             'is_active' => '1',
             'consent_whatsapp' => '1',

@@ -24,6 +24,7 @@ return [
     ],
 
     'fonnte' => [
+        'api_key' => env('FONNTE_API_KEY'),
         'endpoint' => env('FONNTE_API_URL', 'https://api.fonnte.com/send'),
     ],
 

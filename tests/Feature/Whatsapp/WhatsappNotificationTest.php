@@ -171,13 +171,13 @@ class WhatsappNotificationTest extends TestCase
 
     public function test_notification_job_sends_plain_text_and_records_fonnte_message_id(): void
     {
+        config()->set('services.fonnte.api_key', 'fonnte-global-device-key-123456');
         Http::preventStrayRequests();
         Http::fake([
             'https://api.fonnte.com/send' => Http::response(['status' => true, 'id' => ['80367171']]),
         ]);
         $user = User::factory()->create();
         $connection = WhatsappConnection::factory()->for($user)->create([
-            'access_token' => 'fonnte-queued-device-key-123456',
             'recipient_phone' => '628123456789',
         ]);
         $job = new SendWhatsappNotification(
@@ -194,7 +194,7 @@ class WhatsappNotificationTest extends TestCase
         $connection->refresh();
         $this->assertSame('80367171', $connection->last_message_id);
         $this->assertNotNull($connection->last_sent_at);
-        Http::assertSent(fn (Request $request): bool => $request->hasHeader('Authorization', 'fonnte-queued-device-key-123456')
+        Http::assertSent(fn (Request $request): bool => $request->hasHeader('Authorization', 'fonnte-global-device-key-123456')
             && str_contains($request['message'], '*Tugas baru*')
             && $request['target'] === '628123456789');
     }

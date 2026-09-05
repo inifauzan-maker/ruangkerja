@@ -6,7 +6,6 @@ use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Database\Factories\WhatsappConnectionFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,7 +15,6 @@ use InvalidArgumentException;
 #[Fillable([
     'user_id',
     'phone_number_id',
-    'access_token',
     'recipient_phone',
     'template_name',
     'template_language',
@@ -38,7 +36,6 @@ use InvalidArgumentException;
     'last_error_at',
     'last_error_message',
 ])]
-#[Hidden(['access_token'])]
 class WhatsappConnection extends Model
 {
     public const EventAnnouncement = 'announcement';
@@ -136,7 +133,6 @@ class WhatsappConnection extends Model
     protected function casts(): array
     {
         return [
-            'access_token' => 'encrypted',
             'is_active' => 'boolean',
             'consented_at' => 'datetime',
             'opted_out_at' => 'datetime',

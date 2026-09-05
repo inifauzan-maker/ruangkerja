@@ -6,7 +6,6 @@ use App\Models\User;
 use App\Models\WhatsappConnection;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Http\Client\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
@@ -19,26 +18,22 @@ class WhatsappConnectionManagementTest extends TestCase
         $this->get(route('profile.whatsapp.show'))->assertRedirect(route('login'));
     }
 
-    public function test_settings_page_never_displays_stored_api_key(): void
+    public function test_settings_page_explains_that_api_key_is_managed_globally(): void
     {
         $user = User::factory()->create();
-        WhatsappConnection::factory()->for($user)->create([
-            'access_token' => 'fonnte-secret-key-that-must-not-appear',
-        ]);
+        WhatsappConnection::factory()->for($user)->create();
 
         $response = $this->actingAs($user)->get(route('profile.whatsapp.show'));
 
-        $response->assertSee('Fonnte API per pengguna');
-        $response->assertDontSee('fonnte-secret-key-that-must-not-appear');
+        $response->assertSee('API key Fonnte dikelola secara global oleh administrator.');
+        $response->assertDontSee('name="api_key"', false);
     }
 
-    public function test_user_can_save_an_encrypted_fonnte_api_key(): void
+    public function test_user_can_save_recipient_and_notification_preferences(): void
     {
         $user = User::factory()->create();
-        $apiKey = 'fonnte-valid-device-key-123456789';
 
         $response = $this->actingAs($user)->put(route('profile.whatsapp.update'), [
-            'api_key' => $apiKey,
             'recipient_phone' => '+628123456789',
             'is_active' => '1',
             'consent_whatsapp' => '1',
@@ -50,32 +45,26 @@ class WhatsappConnectionManagementTest extends TestCase
             ->assertSessionHas('status', 'Koneksi Fonnte berhasil disimpan.');
 
         $connection = $user->whatsappConnection()->firstOrFail();
-        $this->assertSame($apiKey, $connection->access_token);
         $this->assertSame('628123456789', $connection->recipient_phone);
         $this->assertSame('fonnte', $connection->phone_number_id);
         $this->assertTrue($connection->is_active);
         $this->assertFalse($connection->notify_task_updated);
-        $this->assertNotSame($apiKey, DB::table('whatsapp_connections')->value('access_token'));
     }
 
-    public function test_blank_api_key_preserves_existing_encrypted_key(): void
+    public function test_user_can_disable_their_connection(): void
     {
         $user = User::factory()->create();
-        $connection = WhatsappConnection::factory()->for($user)->create([
-            'access_token' => 'fonnte-existing-device-key-12345',
-        ]);
+        $connection = WhatsappConnection::factory()->for($user)->create();
 
         $this->actingAs($user)->put(route('profile.whatsapp.update'), [
-            'api_key' => '',
             'recipient_phone' => '+628111111111',
         ])->assertRedirect(route('profile.whatsapp.show'));
 
         $connection->refresh();
-        $this->assertSame('fonnte-existing-device-key-12345', $connection->access_token);
         $this->assertFalse($connection->is_active);
     }
 
-    public function test_new_connection_rejects_missing_api_key_and_invalid_phone(): void
+    public function test_new_connection_rejects_invalid_phone(): void
     {
         $user = User::factory()->create();
 
@@ -83,12 +72,13 @@ class WhatsappConnectionManagementTest extends TestCase
             'recipient_phone' => '0812',
         ]);
 
-        $response->assertSessionHasErrors(['api_key', 'recipient_phone']);
+        $response->assertSessionHasErrors(['recipient_phone']);
         $this->assertNull($user->whatsappConnection);
     }
 
     public function test_user_can_send_a_fonnte_test_message(): void
     {
+        config()->set('services.fonnte.api_key', 'fonnte-global-device-key-123456');
         Http::preventStrayRequests();
         Http::fake([
             'https://api.fonnte.com/send' => Http::response([
@@ -99,7 +89,6 @@ class WhatsappConnectionManagementTest extends TestCase
         ]);
         $user = User::factory()->create(['name' => 'Dina']);
         $connection = WhatsappConnection::factory()->for($user)->create([
-            'access_token' => 'fonnte-test-device-key-123456',
             'recipient_phone' => '628123456789',
         ]);
 
@@ -111,7 +100,7 @@ class WhatsappConnectionManagementTest extends TestCase
         $this->assertSame('80367170', $connection->last_message_id);
         Http::assertSent(function (Request $request): bool {
             return $request->url() === 'https://api.fonnte.com/send'
-                && $request->hasHeader('Authorization', 'fonnte-test-device-key-123456')
+                && $request->hasHeader('Authorization', 'fonnte-global-device-key-123456')
                 && $request['target'] === '628123456789'
                 && str_contains($request['message'], 'Tes koneksi TimManager')
                 && $request['countryCode'] === '0';
@@ -120,6 +109,7 @@ class WhatsappConnectionManagementTest extends TestCase
 
     public function test_failed_fonnte_test_message_is_reported_without_deleting_connection(): void
     {
+        config()->set('services.fonnte.api_key', 'fonnte-global-device-key-123456');
         Http::preventStrayRequests();
         Http::fake([
             'https://api.fonnte.com/send' => Http::response([
@@ -139,6 +129,22 @@ class WhatsappConnectionManagementTest extends TestCase
         $this->assertModelExists($connection);
     }
 
+    public function test_test_message_reports_missing_global_api_key_without_sending_request(): void
+    {
+        config()->set('services.fonnte.api_key');
+        Http::preventStrayRequests();
+        $user = User::factory()->create();
+        $connection = WhatsappConnection::factory()->for($user)->create();
+
+        $response = $this->actingAs($user)->post(route('profile.whatsapp.test'));
+
+        $response->assertRedirect()->assertSessionHasErrors([
+            'whatsapp' => 'API key Fonnte global belum dikonfigurasi oleh administrator.',
+        ]);
+        $this->assertNotNull($connection->fresh()->last_error_at);
+        Http::assertNothingSent();
+    }
+
     public function test_user_can_disconnect_their_whatsapp_api(): void
     {
         $user = User::factory()->create();
@@ -156,7 +162,6 @@ class WhatsappConnectionManagementTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->put(route('profile.whatsapp.update'), [
-            'api_key' => 'fonnte-valid-device-key-123456789',
             'recipient_phone' => '+628123456789',
             'notify_due_reminders' => '1',
             'quiet_hours_enabled' => '1',
@@ -181,7 +186,6 @@ class WhatsappConnectionManagementTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->put(route('profile.whatsapp.update'), [
-            'api_key' => 'fonnte-valid-device-key-123456789',
             'recipient_phone' => '+628123456789',
             'timezone' => 'Mars/Olympus',
             'quiet_hours_start' => '25:00',
