@@ -15,11 +15,15 @@ class RegisteredUserController extends Controller
 {
     public function create(): View
     {
+        abort_if(config('sso.enabled'), 404);
+
         return view('auth.register');
     }
 
     public function store(Request $request): RedirectResponse
     {
+        abort_if(config('sso.enabled'), 404);
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:100'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],

@@ -29,7 +29,7 @@
                     @csrf
                     <label class="grid gap-2 text-sm font-semibold">
                         Email
-                        <input name="email" type="email" value="{{ old('email', 'demo@ruangkerja.test') }}" required autofocus autocomplete="email" class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-100">
+                        <input name="email" type="email" value="{{ old('email') }}" required autofocus autocomplete="email" class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-100">
                     </label>
                     <label class="grid gap-2 text-sm font-semibold">
                         Kata sandi
@@ -44,7 +44,12 @@
                     </label>
                     <button class="rounded-xl bg-[#123A70] px-5 py-3.5 font-bold text-white shadow-lg shadow-blue-950/15 transition hover:-translate-y-0.5 hover:bg-[#1D4E89]">Masuk</button>
                 </form>
-                <p class="mt-7 text-center text-sm text-slate-500">Belum punya akun? <a href="{{ route('register') }}" class="font-bold text-red-700 hover:underline">Buat ruang kerja</a></p>
+                @if(config('sso.enabled'))
+                    <a href="{{ route('sso.login') }}" class="mt-5 block rounded-xl border border-blue-200 bg-blue-50 px-5 py-3.5 text-center font-bold text-[#123A70] transition hover:bg-blue-100 focus:outline-none focus:ring-4 focus:ring-blue-100">Masuk dengan akun SIVMI</a>
+                @endif
+                @unless(config('sso.enabled'))
+                    <p class="mt-7 text-center text-sm text-slate-500">Belum punya akun? <a href="{{ route('register') }}" class="font-bold text-red-700 hover:underline">Buat ruang kerja</a></p>
+                @endunless
             </div>
         </section>
     </main>

@@ -7,6 +7,7 @@ use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\AttachmentVersionController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Auth\SsoAuthController;
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\BoardFileSettingsController;
 use App\Http\Controllers\BoardListController;
@@ -31,6 +32,8 @@ use App\Http\Controllers\WhatsappNotificationHistoryController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function (): void {
+    Route::get('/sso/login', [SsoAuthController::class, 'redirect'])->middleware('throttle:20,1')->name('sso.login');
+    Route::get('/sso/callback', [SsoAuthController::class, 'callback'])->middleware('throttle:20,1')->name('sso.callback');
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login.store');
     Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
