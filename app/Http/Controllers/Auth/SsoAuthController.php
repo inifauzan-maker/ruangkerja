@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -38,36 +39,59 @@ class SsoAuthController extends Controller
     {
         $data = $request->validated();
         $attempt = $request->session()->pull('sso.attempt');
-        $failure = fn (): RedirectResponse => to_route('login')->withErrors(['sso' => 'Login SSO gagal atau kedaluwarsa. Silakan coba kembali.']);
 
-        if (! config('sso.enabled') || ! is_array($attempt) || ! hash_equals($attempt['state'], $data['state']) || $attempt['started_at'] < now()->timestamp - 300) {
-            return $failure();
+        if (! config('sso.enabled')) {
+            return $this->failure('disabled');
+        }
+        if (! is_array($attempt) || ! isset($attempt['state'], $attempt['verifier'], $attempt['started_at'])) {
+            return $this->failure('session_missing');
+        }
+        if (! hash_equals($attempt['state'], $data['state'])) {
+            return $this->failure('state_mismatch');
+        }
+        if ($attempt['started_at'] < now()->timestamp - 300) {
+            return $this->failure('session_expired');
         }
 
+        $stage = 'token_exchange';
         try {
             $server = rtrim(config('sso.server_url'), '/');
-            $token = Http::asForm()->acceptJson()->withoutRedirecting()->timeout(15)->post($server.'/oauth/token', [
+            $tokenResponse = Http::asForm()->acceptJson()->withoutRedirecting()->timeout(15)->post($server.'/oauth/token', [
                 'grant_type' => 'authorization_code', 'client_id' => config('sso.client_id'),
                 'client_secret' => config('sso.client_secret'), 'redirect_uri' => config('sso.redirect_uri'),
                 'code' => $data['code'], 'code_verifier' => $attempt['verifier'],
-            ])->throw()->json('access_token');
+            ])->throw();
+            $token = $tokenResponse->json('access_token');
 
-            if (! is_string($token) || $token === '') {
-                return $failure();
+            if (! $tokenResponse->successful() || ! is_string($token) || $token === '') {
+                return $this->failure('invalid_token_response', ['http_status' => $tokenResponse->status()]);
             }
 
-            $identity = Http::withToken($token)->acceptJson()->withoutRedirecting()->timeout(15)->get($server.'/api/sso/user')->throw()->json();
-        } catch (ConnectionException|RequestException $exception) {
-            return $failure();
+            $stage = 'profile_fetch';
+            $profileResponse = Http::withToken($token)->acceptJson()->withoutRedirecting()->timeout(15)->get($server.'/api/sso/user')->throw();
+            if (! $profileResponse->successful()) {
+                return $this->failure('profile_fetch', ['http_status' => $profileResponse->status()]);
+            }
+            $identity = $profileResponse->json();
+        } catch (ConnectionException $exception) {
+            return $this->failure($stage, ['connection_failed' => true]);
+        } catch (RequestException $exception) {
+            $error = $exception->response->json('error');
+            $context = ['http_status' => $exception->response->status()];
+            if (is_string($error) && in_array($error, ['invalid_client', 'invalid_grant', 'invalid_request', 'invalid_scope', 'unsupported_grant_type', 'server_error'], true)) {
+                $context['oauth_error'] = $error;
+            }
+
+            return $this->failure($stage, $context);
         }
 
         if (! is_array($identity) || ! isset($identity['id']) || (! is_string($identity['id']) && ! is_int($identity['id']))) {
-            return $failure();
+            return $this->failure('invalid_identity');
         }
         $identity['id'] = (string) $identity['id'];
         $validator = Validator::make($identity, ['id' => ['required', 'string', 'max:255'], 'name' => ['required', 'string', 'max:255'], 'email' => ['required', 'email', 'max:255']]);
         if ($validator->fails()) {
-            return $failure();
+            return $this->failure('invalid_identity');
         }
 
         $user = $users->resolve($validator->validated());
@@ -75,5 +99,20 @@ class SsoAuthController extends Controller
         $request->session()->regenerate();
 
         return redirect()->intended(route('dashboard'));
+    }
+
+    /** @param array<string, int|string|bool> $context */
+    private function failure(string $reason, array $context = []): RedirectResponse
+    {
+        Log::warning('SIVMI SSO callback failed', ['reason' => $reason, ...$context]);
+        $code = match ($reason) {
+            'disabled' => 'SSO-CONFIG',
+            'session_missing', 'state_mismatch' => 'SSO-SESSION',
+            'session_expired' => 'SSO-EXPIRED',
+            'token_exchange', 'invalid_token_response' => 'SSO-TOKEN',
+            default => 'SSO-PROFILE',
+        };
+
+        return to_route('login')->withErrors(['sso' => 'Login SSO gagal ('.$code.'). Silakan coba kembali atau hubungi administrator.']);
     }
 }

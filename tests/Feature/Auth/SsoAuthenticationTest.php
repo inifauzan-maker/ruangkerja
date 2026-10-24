@@ -5,6 +5,7 @@ namespace Tests\Feature\Auth;
 use App\Models\User;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
 class SsoAuthenticationTest extends TestCase
@@ -122,6 +123,42 @@ class SsoAuthenticationTest extends TestCase
         $this->from(route('login'))->get(route('sso.callback'))->assertRedirect(route('login'))->assertSessionHasErrors(['state', 'code']);
         $this->assertGuest();
         Http::assertNothingSent();
+    }
+
+    public function test_token_failure_logs_safe_metadata_without_credentials_or_response_body(): void
+    {
+        Log::shouldReceive('warning')->once()->with('SIVMI SSO callback failed', [
+            'reason' => 'token_exchange', 'http_status' => 401, 'oauth_error' => 'invalid_client',
+        ]);
+        Http::fake(['https://sso.example.test/oauth/token' => Http::response([
+            'error' => 'invalid_client', 'error_description' => 'Do not log test-secret or code', 'client_secret' => 'test-secret',
+        ], 401)]);
+        $this->withSession($this->attempt())->get($this->callbackUrl())->assertRedirect(route('login'))
+            ->assertSessionHasErrors(['sso' => 'Login SSO gagal (SSO-TOKEN). Silakan coba kembali atau hubungi administrator.']);
+        Http::assertSentCount(1);
+        $this->assertGuest();
+    }
+
+    public function test_missing_session_has_a_distinct_support_code_without_network_requests(): void
+    {
+        Log::shouldReceive('warning')->once()->with('SIVMI SSO callback failed', ['reason' => 'session_missing']);
+        $this->get($this->callbackUrl())->assertRedirect(route('login'))
+            ->assertSessionHasErrors(['sso' => 'Login SSO gagal (SSO-SESSION). Silakan coba kembali atau hubungi administrator.']);
+        Http::assertNothingSent();
+        $this->assertGuest();
+    }
+
+    public function test_profile_failure_has_a_distinct_support_code(): void
+    {
+        Log::shouldReceive('warning')->once()->with('SIVMI SSO callback failed', ['reason' => 'profile_fetch', 'http_status' => 401]);
+        Http::fake([
+            'https://sso.example.test/oauth/token' => Http::response(['access_token' => 'test-access-token']),
+            'https://sso.example.test/api/sso/user' => Http::response(['message' => 'Unauthenticated.'], 401),
+        ]);
+        $this->withSession($this->attempt())->get($this->callbackUrl())->assertRedirect(route('login'))
+            ->assertSessionHasErrors(['sso' => 'Login SSO gagal (SSO-PROFILE). Silakan coba kembali atau hubungi administrator.']);
+        Http::assertSentCount(2);
+        $this->assertGuest();
     }
 
     private function fakeIdentity(): void
