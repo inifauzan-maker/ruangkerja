@@ -35,9 +35,13 @@ Route::middleware('guest')->group(function (): void {
     Route::get('/sso/login', [SsoAuthController::class, 'redirect'])->middleware('throttle:20,1')->name('sso.login');
     Route::get('/sso/callback', [SsoAuthController::class, 'callback'])->middleware('throttle:20,1')->name('sso.callback');
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
-    Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login.store');
+    Route::post('/login', [AuthenticatedSessionController::class, 'store'])
+        ->middleware('throttle:10,1')
+        ->name('login.store');
     Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
-    Route::post('/register', [RegisteredUserController::class, 'store'])->name('register.store');
+    Route::post('/register', [RegisteredUserController::class, 'store'])
+        ->middleware('throttle:10,1')
+        ->name('register.store');
 });
 
 Route::middleware(['auth', 'active'])->group(function (): void {

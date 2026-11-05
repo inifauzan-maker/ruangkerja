@@ -192,6 +192,7 @@
                                                         @endif
                                                     </div>
                                                     <p class="mt-0.5 truncate text-xs text-slate-500">{{ $user->email }}</p>
+                                                    <span aria-label="Role: {{ $user->isSuperAdmin() ? 'Superadmin' : 'User' }}" class="mt-1 inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold {{ $user->isSuperAdmin() ? 'bg-violet-50 text-violet-700' : 'bg-slate-100 text-slate-600' }}">{{ $user->isSuperAdmin() ? 'Superadmin' : 'User' }}</span>
                                                 </div>
                                             </div>
                                         </td>
@@ -244,6 +245,7 @@
                                             @endif
                                         </div>
                                         <p class="truncate text-xs text-slate-500">{{ $user->email }}</p>
+                                        <span aria-label="Role: {{ $user->isSuperAdmin() ? 'Superadmin' : 'User' }}" class="mt-1 inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold {{ $user->isSuperAdmin() ? 'bg-violet-50 text-violet-700' : 'bg-slate-100 text-slate-600' }}">{{ $user->isSuperAdmin() ? 'Superadmin' : 'User' }}</span>
                                     </div>
                                     <span class="h-2 w-2 shrink-0 rounded-full {{ $user->is_active ? 'bg-emerald-500' : 'bg-slate-300' }}"></span>
                                 </div>

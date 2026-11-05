@@ -32,6 +32,8 @@ class SuperAdminAccessTest extends TestCase
         $response->assertOk()
             ->assertSee('Pusat Superadmin')
             ->assertSee('anggota@example.test')
+            ->assertSee('aria-label="Role: User"', false)
+            ->assertSee('aria-label="Role: Superadmin"', false)
             ->assertSee('&lt;script&gt;', false)
             ->assertDontSee('<script>alert(1)</script>', false);
     }
