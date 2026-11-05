@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 
 class UpdateUserRequest extends FormRequest
 {
@@ -25,6 +26,12 @@ class UpdateUserRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'name' => ['sometimes', 'required', 'string', 'max:100'],
+            'email' => ['sometimes', 'required', 'email', 'max:255', Rule::unique(User::class)->ignore($this->route('user'))],
+            'job_title' => ['nullable', 'string', 'max:100'],
+            'phone' => ['nullable', 'string', 'max:30', 'regex:/^[0-9+()\-\s.]+$/'],
+            'bio' => ['nullable', 'string', 'max:1000'],
+            'password' => ['nullable', 'confirmed', Password::defaults()],
             'global_role' => ['required', Rule::in(User::globalRoles())],
             'is_active' => ['required', 'boolean'],
         ];

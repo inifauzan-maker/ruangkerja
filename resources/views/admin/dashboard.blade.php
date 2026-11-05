@@ -140,7 +140,8 @@
                                     <span class="h-5 w-1 rounded-full bg-[#2563EB]"></span>
                                     <h2 class="text-lg font-extrabold text-slate-900">Manajemen pengguna</h2>
                                 </div>
-                                <p class="mt-1 pl-3 text-xs text-slate-500">Atur status akun dan hak akses global.</p>
+                                <p class="mt-1 pl-3 text-xs text-slate-500">Atur identitas, status akun, dan hak akses global.</p>
+                                <a href="{{ route('admin.users.create') }}" class="mt-3 inline-flex rounded-lg bg-blue-600 px-4 py-2 text-xs font-bold text-white hover:bg-blue-700">Tambah pengguna</a>
                             </div>
                             <form method="GET" action="{{ route('admin.dashboard') }}#users" class="grid gap-2 sm:grid-cols-2 xl:grid-cols-[minmax(220px,1fr)_150px_150px_auto]">
                                 <label class="relative sm:col-span-2 xl:col-span-1">
@@ -209,6 +210,7 @@
                                             @endif
                                         </td>
                                         <td class="px-5 py-4">
+                                            <a href="{{ route('admin.users.edit', $user) }}" class="mb-2 inline-flex rounded-md border border-slate-300 px-3 py-2 text-xs font-bold text-blue-600 hover:bg-blue-50">Edit pengguna</a>
                                             <form method="POST" action="{{ route('admin.users.update', $user) }}" class="flex min-w-[310px] items-center justify-end gap-2">
                                                 @csrf
                                                 @method('PATCH')
@@ -253,6 +255,7 @@
                                     <div><p class="text-slate-400">Ruang kerja</p><p class="mt-1 font-bold text-slate-700">{{ $user->owned_teams_count }} tim · {{ $user->joined_teams_count }} anggota</p></div>
                                     <div><p class="text-slate-400">Terdaftar</p><p class="mt-1 font-bold text-slate-700">{{ $user->created_at->format('d M Y') }}</p></div>
                                 </div>
+                                <a href="{{ route('admin.users.edit', $user) }}" class="mb-3 inline-flex rounded-md border border-slate-300 px-3 py-2 text-xs font-bold text-blue-600 hover:bg-blue-50">Edit pengguna</a>
                                 <form method="POST" action="{{ route('admin.users.update', $user) }}" class="grid grid-cols-2 gap-2">
                                     @csrf
                                     @method('PATCH')
@@ -298,10 +301,10 @@
                                 <div class="min-w-0 flex-1">
                                     <p class="text-sm leading-6 text-slate-700">
                                         <strong class="text-slate-900">{{ $audit->actor?->name ?? 'Perintah sistem' }}</strong>
-                                        memperbarui
-                                        <strong class="text-slate-900">{{ $audit->targetUser?->name ?? 'pengguna yang dihapus' }}</strong>
+                                        {{ match ($audit->action) { 'user.created' => 'menambahkan', 'user.deleted' => 'menghapus', default => 'memperbarui' } }}
+                                        <strong class="text-slate-900">{{ $audit->targetUser?->name ?? ($audit->before['name'] ?? 'pengguna yang dihapus') }}</strong>
                                     </p>
-                                    <p class="truncate text-xs text-slate-400">{{ $audit->action }} · {{ $audit->targetUser?->email }}</p>
+                                    <p class="truncate text-xs text-slate-400">{{ $audit->action }} · {{ $audit->targetUser?->email ?? ($audit->before['email'] ?? '') }}</p>
                                 </div>
                                 <time class="hidden shrink-0 text-xs font-semibold text-slate-400 sm:block">{{ $audit->created_at->diffForHumans() }}</time>
                             </article>

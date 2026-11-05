@@ -5,12 +5,13 @@ namespace App\Actions;
 use App\Models\AdminAuditLog;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class UpdateAdminUser
 {
     /**
-     * @param  array{global_role: string, is_active: bool}  $attributes
+     * @param  array{global_role: string, is_active: bool, name?: string, email?: string, job_title?: ?string, phone?: ?string, bio?: ?string, password?: string}  $attributes
      */
     public function execute(
         ?User $actor,
@@ -45,11 +46,33 @@ class UpdateAdminUser
                 }
             }
 
+            $auditFields = array_intersect(array_keys($attributes), ['name', 'email', 'job_title', 'phone', 'bio']);
+            $before = array_merge($before, $lockedUser->only($auditFields));
+            $oldEmail = $lockedUser->email;
+            $passwordChanged = ! empty($attributes['password']);
+            $emailChanged = isset($attributes['email']) && $attributes['email'] !== $oldEmail;
+
+            if ($emailChanged) {
+                $lockedUser->email_verified_at = null;
+            }
+
+            if ($passwordChanged || $emailChanged) {
+                $lockedUser->remember_token = Str::random(60);
+                DB::table('password_reset_tokens')->where('email', $oldEmail)->delete();
+                DB::table('sessions')->where('user_id', $lockedUser->id)->delete();
+            }
+
             $lockedUser->forceFill($attributes)->save();
             $after = [
                 'global_role' => $lockedUser->global_role,
                 'is_active' => $lockedUser->is_active,
             ];
+
+            $after = array_merge($after, $lockedUser->only($auditFields));
+
+            if ($passwordChanged) {
+                $after['password_changed'] = true;
+            }
 
             if ($before !== $after) {
                 AdminAuditLog::query()->create([
