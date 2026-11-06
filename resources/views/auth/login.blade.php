@@ -31,10 +31,22 @@
                         Email
                         <input name="email" type="email" value="{{ old('email') }}" required autofocus autocomplete="email" class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-100">
                     </label>
-                    <label class="grid gap-2 text-sm font-semibold">
-                        Kata sandi
-                        <input name="password" type="password" required autocomplete="current-password" class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-100">
-                    </label>
+                    <div class="grid gap-2 text-sm font-semibold">
+                        <label for="password">Kata sandi</label>
+                        <div class="relative">
+                            <input id="password" name="password" type="password" required autocomplete="current-password" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5 pr-12 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-100">
+                            <button type="button" data-password-toggle="password" aria-label="Tampilkan kata sandi" aria-pressed="false" class="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-500 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <svg data-password-visible-icon xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12s3.5-6.75 9.75-6.75S21.75 12 21.75 12s-3.5 6.75-9.75 6.75S2.25 12 2.25 12Z" />
+                                    <circle cx="12" cy="12" r="3" />
+                                </svg>
+                                <svg data-password-hidden-icon xmlns="http://www.w3.org/2000/svg" class="hidden h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m3 3 18 18M10.6 10.6a2 2 0 0 0 2.8 2.8" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.9 5.4A10.7 10.7 0 0 1 12 5.25c6.25 0 9.75 6.75 9.75 6.75a17 17 0 0 1-3.2 3.9M6.2 6.2C3.6 8 2.25 12 2.25 12s3.5 6.75 9.75 6.75c1.4 0 2.65-.35 3.75-.9" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
                     @if ($errors->any())
                         <p class="rounded-xl bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700">{{ $errors->first() }}</p>
                     @endif

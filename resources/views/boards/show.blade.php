@@ -116,9 +116,9 @@
                         <form method="POST" action="{{ route('boards.lists.store', $board) }}" class="flex gap-2">
                             @csrf
                             <input name="title" required maxlength="80" placeholder="List baru..." aria-label="Nama list baru" class="w-32 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:w-44 focus:border-blue-600 focus:ring-4 focus:ring-blue-100 sm:w-40">
-                            <button class="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-bold text-slate-600 hover:border-emerald-700 hover:text-emerald-800">+ List</button>
+                            <button class="cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-bold text-slate-600 hover:border-emerald-700 hover:text-emerald-800">+ List</button>
                         </form>
-                        <button data-open-task-modal data-list-id="{{ $board->lists->first()?->id }}" class="inline-flex items-center gap-2 rounded-xl bg-[#123A70] px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-[#1D4E89]">
+                        <button data-open-task-modal data-list-id="{{ $board->lists->first()?->id }}" class="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[#123A70] px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-[#1D4E89]">
                             <span class="text-lg leading-none">+</span> Buat tugas
                         </button>
                     </div>
@@ -185,7 +185,7 @@
                                 @endforeach
                             </div>
 
-                            <button data-open-task-modal data-list-id="{{ $list->id }}" class="mt-2 flex w-full shrink-0 items-center gap-2 rounded-xl px-3 py-2 text-sm font-bold text-slate-500 hover:bg-white hover:text-emerald-800">
+                            <button data-open-task-modal data-list-id="{{ $list->id }}" class="mt-2 flex w-full shrink-0 cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm font-bold text-slate-500 hover:bg-white hover:text-emerald-800">
                                 <span class="text-lg leading-none">+</span> Buat tugas
                             </button>
                         </article>

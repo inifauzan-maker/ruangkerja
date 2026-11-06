@@ -2,6 +2,23 @@ const sidebar = document.querySelector('#sidebar');
 const sidebarToggle = document.querySelector('#sidebar-toggle');
 const sidebarBackdrop = document.querySelector('#sidebar-backdrop');
 
+document.querySelectorAll('[data-password-toggle]').forEach((button) => {
+    button.addEventListener('click', () => {
+        const passwordInput = document.getElementById(button.dataset.passwordToggle);
+
+        if (!(passwordInput instanceof HTMLInputElement)) {
+            return;
+        }
+
+        const isPasswordVisible = passwordInput.type === 'password';
+        passwordInput.type = isPasswordVisible ? 'text' : 'password';
+        button.setAttribute('aria-pressed', String(isPasswordVisible));
+        button.setAttribute('aria-label', isPasswordVisible ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi');
+        button.querySelector('[data-password-visible-icon]')?.classList.toggle('hidden', isPasswordVisible);
+        button.querySelector('[data-password-hidden-icon]')?.classList.toggle('hidden', !isPasswordVisible);
+    });
+});
+
 const setSidebarOpen = (isOpen) => {
     sidebar?.classList.toggle('-translate-x-full', !isOpen);
     sidebarBackdrop?.classList.toggle('hidden', !isOpen);
